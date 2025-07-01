@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>社群媒體自動化系統</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .section h2 {
+            color: #555;
+            margin-top: 0;
+        }
+        .button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+        .button.success {
+            background: #28a745;
+        }
+        .button.danger {
+            background: #dc3545;
+        }
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .status-card {
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .status-card.connected {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .status-card.disconnected {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .log-area {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .config-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .config-table th,
+        .config-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .config-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 社群媒體自動化系統</h1>
+        
+        <!-- 控制面板 -->
+        <div class="section">
+            <h2>📊 控制面板</h2>
+            <button class="button" onclick="runAutomation()">▶️ 執行自動化</button>
+            <button class="button" onclick="refreshStatus()">🔄 重新整理狀態</button>
+            <button class="button" onclick="testServices()">🧪 測試服務</button>
+            <div class="loading" id="loading">⏳ 處理中...</div>
+        </div>
+
+        <!-- 系統狀態 -->
+        <div class="section">
+            <h2>🔌 服務狀態</h2>
+            <div class="status-grid" id="statusGrid">
+                <!-- 狀態卡片將由 JavaScript 動態生成 -->
+            </div>
+        </div>
+
+        <!-- 設定資訊 -->
+        <div class="section">
+            <h2>⚙️ 設定資訊</h2>
+            <table class="config-table" id="configTable">
+                <thead>
+                    <tr>
+                        <th>設定項目</th>
+                        <th>狀態</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 設定資訊將由 JavaScript 動態生成 -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 操作日誌 -->
+        <div class="section">
+            <h2>📝 操作日誌</h2>
+            <div class="log-area" id="logArea">
+                系統已就緒，等待操作...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全域變數
+        let logMessages = [];
+
+        // 添加日誌訊息
+        function addLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logMessage = `[${timestamp}] ${message}`;
+            logMessages.push(logMessage);
+            
+            // 保持最多 50 條日誌
+            if (logMessages.length > 50) {
+                logMessages.shift();
+            }
+            
+            const logArea = document.getElementById('logArea');
+            logArea.innerHTML = logMessages.join('\n');
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        // 顯示載入狀態
+        function showLoading(show = true) {
+            const loading = document.getElementById('loading');
+            loading.style.display = show ? 'block' : 'none';
+        }
+
+        // 執行自動化
+        async function runAutomation() {
+            addLog('開始執行自動化流程...');
+            showLoading(true);
+            
+            try {
+                const response = await fetch('/api/automation/run', {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    addLog('✅ 自動化流程已開始執行');
+                } else {
+                    addLog(`❌ 執行失敗: ${data.message}`);
+                }
+            } catch (error) {
+                addLog(`❌ 請求失敗: ${error.message}`);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // 重新整理狀態
+        async function refreshStatus() {
+            addLog('重新整理系統狀態...');
+            showLoading(true);
+            
+            try {
+                await Promise.all([
+                    loadStatus(),
+                    loadConfig()
+                ]);
+                addLog('✅ 狀態更新完成');
+            } catch (error) {
+                addLog(`❌ 更新失敗: ${error.message}`);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // 測試服務
+        async function testServices() {
+            addLog('開始測試服務連線...');
+            showLoading(true);
+            
+            try {
+                const response = await fetch('/api/automation/test-services', {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    addLog('✅ 服務測試完成');
+                    const results = data.test_results;
+                    
+                    for (const [service, result] of Object.entries(results)) {
+                        const status = result.success ? '✅' : '❌';
+                        addLog(`${status} ${service}: ${result.message}`);
+                    }
+                    
+                    // 更新狀態顯示
+                    await loadStatus();
+                } else {
+                    addLog(`❌ 測試失敗: ${data.message}`);
+                }
+            } catch (error) {
+                addLog(`❌ 測試請求失敗: ${error.message}`);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // 載入系統狀態
+        async function loadStatus() {
+            try {
+                const response = await fetch('/api/automation/status');
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateStatusGrid(data.status);
+                }
+            } catch (error) {
+                console.error('載入狀態失敗:', error);
+            }
+        }
+
+        // 載入設定資訊
+        async function loadConfig() {
+            try {
+                const response = await fetch('/api/automation/config');
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateConfigTable(data.config);
+                }
+            } catch (error) {
+                console.error('載入設定失敗:', error);
+            }
+        }
+
+        // 更新狀態網格
+        function updateStatusGrid(status) {
+            const statusGrid = document.getElementById('statusGrid');
+            const services = status.services;
+            
+            let html = '';
+            
+            // 整體設定狀態
+            html += `
+                <div class="status-card ${status.config_valid ? 'connected' : 'disconnected'}">
+                    <h4>整體設定</h4>
+                    <p>${status.config_valid ? '✅ 已設定' : '❌ 未完成'}</p>
+                </div>
+            `;
+            
+            // 各服務狀態
+            const serviceNames = {
+                notion: 'Notion',
+                instagram: 'Instagram',
+                facebook: 'Facebook',
+                threads: 'Threads',
+                line: 'Line'
+            };
+            
+            for (const [key, name] of Object.entries(serviceNames)) {
+                const connected = services[key];
+                html += `
+                    <div class="status-card ${connected ? 'connected' : 'disconnected'}">
+                        <h4>${name}</h4>
+                        <p>${connected ? '✅ 已連接' : '❌ 未設定'}</p>
+                    </div>
+                `;
+            }
+            
+            statusGrid.innerHTML = html;
+        }
+
+        // 更新設定表格
+        function updateConfigTable(config) {
+            const tbody = document.querySelector('#configTable tbody');
+            
+            const configItems = [
+                { name: 'Notion API', value: config.notion_configured ? '已設定' : '未設定' },
+                { name: 'Instagram API', value: config.instagram_configured ? '已設定' : '未設定' },
+                { name: 'Facebook API', value: config.facebook_configured ? '已設定' : '未設定' },
+                { name: 'Threads API', value: config.threads_configured ? '已設定' : '未設定' },
+                { name: 'Line API', value: config.line_configured ? '已設定' : '未設定' },
+                { name: '暫存目錄', value: config.temp_media_dir },
+                { name: '最大圖片大小', value: `${config.max_image_size_mb} MB` },
+                { name: '最大影片大小', value: `${config.max_video_size_mb} MB` },
+                { name: '日誌等級', value: config.log_level }
+            ];
+            
+            let html = '';
+            for (const item of configItems) {
+                html += `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${item.value}</td>
+                    </tr>
+                `;
+            }
+            
+            tbody.innerHTML = html;
+        }
+
+        // 頁面載入時初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            addLog('🚀 系統介面已載入');
+            refreshStatus();
+        });
+    </script>
+</body>
+</html>
+
