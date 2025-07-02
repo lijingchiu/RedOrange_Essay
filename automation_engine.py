@@ -1,13 +1,13 @@
 import logging
 from datetime import datetime
 from typing import List, Dict, Any
-from src.config import config
-from src.services.notion_service import NotionService
-from src.services.instagram_service import InstagramService
-from src.services.facebook_service import FacebookService
-from src.services.threads_service import ThreadsService
-from src.services.line_service import LineService
-from src.services.media_processor import MediaProcessor
+from config import config
+from notion_service import NotionService
+from instagram_service import InstagramService
+from facebook_service import FacebookService
+from threads_service import ThreadsService
+from line_service import LineService
+from media_processor import MediaProcessor
 
 # 設定日誌
 logging.basicConfig(

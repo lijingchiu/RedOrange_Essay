@@ -16,8 +16,8 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.config import config
-from src.services.line_service import LineService
+from config import config
+from line_service import LineService
 
 # 設定日誌
 logging.basicConfig(
