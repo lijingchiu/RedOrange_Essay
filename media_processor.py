@@ -4,7 +4,7 @@ import logging
 import tempfile
 from typing import Optional, Tuple, Dict, Any
 from urllib.parse import urlparse
-from src.config import config
+from config import config
 
 logger = logging.getLogger(__name__)
 

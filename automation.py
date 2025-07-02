@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
-from src.automation_engine import AutomationEngine
-from src.config import config
+from automation_engine import AutomationEngine
+from config import config
 import threading
 import logging
 
@@ -102,7 +102,7 @@ def test_services():
         # 測試 Notion
         if config.NOTION_API_KEY and config.NOTION_DATABASE_ID:
             try:
-                from src.services.notion_service import NotionService
+                from notion_service import NotionService
                 notion_service = NotionService()
                 posts = notion_service.get_pending_posts()
                 results['notion'] = {
@@ -123,7 +123,7 @@ def test_services():
         # 測試 Instagram
         if config.INSTAGRAM_ACCESS_TOKEN and config.INSTAGRAM_USER_ID:
             try:
-                from src.services.instagram_service import InstagramService
+                from instagram_service import InstagramService
                 instagram_service = InstagramService()
                 account_info = instagram_service.get_account_info()
                 if account_info:
@@ -150,7 +150,7 @@ def test_services():
         # 測試 Facebook
         if config.FACEBOOK_ACCESS_TOKEN and config.FACEBOOK_PAGE_ID:
             try:
-                from src.services.facebook_service import FacebookService
+                from facebook_service import FacebookService
                 facebook_service = FacebookService()
                 page_info = facebook_service.get_page_info()
                 if page_info:
@@ -177,7 +177,7 @@ def test_services():
         # 測試 Threads
         if config.THREADS_ACCESS_TOKEN and config.THREADS_USER_ID:
             try:
-                from src.services.threads_service import ThreadsService
+                from threads_service import ThreadsService
                 threads_service = ThreadsService()
                 user_info = threads_service.get_user_info()
                 if user_info:
@@ -204,7 +204,7 @@ def test_services():
         # 測試 Line
         if config.LINE_CHANNEL_ACCESS_TOKEN:
             try:
-                from src.services.line_service import LineService
+                from line_service import LineService
                 line_service = LineService()
                 bot_info = line_service.get_profile()
                 if bot_info:
