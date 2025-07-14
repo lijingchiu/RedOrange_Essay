@@ -1,6 +1,6 @@
 # Webhook Trigger App
 
-This Flask application serves a single-page site with a clean design inspired by Apple's aesthetic. The landing page presents a large hero section with a button that triggers a POST request to `/trigger-webhook`, which forwards the request to the URL configured via `WEBHOOK_URL`.
+
 
 ## Getting Started
 
@@ -8,7 +8,7 @@ This Flask application serves a single-page site with a clean design inspired by
    ```bash
    pip install -r requirements.txt
    ```
-2. Copy `.env.example` to `.env` and set `WEBHOOK_URL` to your target.
+
 3. Run the server:
    ```bash
    python main.py
@@ -17,4 +17,3 @@ This Flask application serves a single-page site with a clean design inspired by
 
 ## Deployment
 
-A simple `Dockerfile` is provided. Build the image and run it with your environment variables to expose the webhook URL and port of your choice.
