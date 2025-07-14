@@ -24,11 +24,11 @@ RUN mkdir -p /tmp/media logs
 
 # 設定環境變數
 ENV PYTHONPATH=/app
-ENV FLASK_APP=src/main.py
+ENV FLASK_APP=main.py
 
 # 暴露端口
 EXPOSE 5000
 
 # 啟動命令
-CMD ["python", "src/main.py"]
+CMD ["python", "main.py"]
 
