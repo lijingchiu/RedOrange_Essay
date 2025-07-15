@@ -1,0 +1,28 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header.hero {
+    background-color: #f45000;
+    color: white;
+    text-align: center;
+    padding: 80px 20px;
+}
+
+section {
+    padding: 40px 20px;
+}
+
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.gallery-item img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
